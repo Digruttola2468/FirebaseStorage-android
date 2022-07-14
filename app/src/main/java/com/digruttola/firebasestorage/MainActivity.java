@@ -69,9 +69,10 @@ public class MainActivity extends AppCompatActivity {
         });
 
         btSubirImagen.setOnClickListener( view -> {
-            StorageReference filePath = storage.getReference().child("fotos").child(path.getLastPathSegment());
+
 
             if(path != null){
+                StorageReference filePath = storage.getReference().child("fotos").child(path.getLastPathSegment());
                 filePath.putFile(path).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                     @Override
                     public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
