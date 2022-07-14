@@ -34,11 +34,11 @@ public class MainActivity extends AppCompatActivity {
     private FirebaseStorage storage = FirebaseStorage.getInstance();
     private StorageReference pathReference = storage.getReferenceFromUrl("gs://fir-storage-c7c2d.appspot.com/Horarios/horario_1b.png");
 
-    private Button btSubirImagen,btGaleria,btSiguiente;
+    private Button btSubirImagen,btGaleria,btSiguiente,btDelete;
 
     private ImageView view;
     private Uri path;
-
+    private ArrayList<StorageReference> listadoImagenes = new ArrayList<>();
 
     int i = 0;
     @Override
@@ -50,8 +50,9 @@ public class MainActivity extends AppCompatActivity {
         btSubirImagen = findViewById(R.id.btSubirImagen);
         btGaleria = findViewById(R.id.btBuscarImage);
         btSiguiente = findViewById(R.id.btSiguiente);
+        btDelete = findViewById(R.id.btDeleteImage);
 
-        ArrayList<StorageReference> listadoImagenes = new ArrayList<>();
+
 
         StorageReference listRef = storage.getReference().child("fotos");
         listRef.listAll().addOnSuccessListener(new OnSuccessListener<ListResult>() {
@@ -95,6 +96,14 @@ public class MainActivity extends AppCompatActivity {
         btSiguiente.setOnClickListener( view2 -> {
             i++;
 
+
+
+            if(listadoImagenes.size() == 0){
+                Toast.makeText(MainActivity.this, "No hay imagen", Toast.LENGTH_SHORT).show();
+                view.setImageResource(R.drawable.no_image_available);
+                return;
+            }
+
             if(i >= listadoImagenes.size()){
                 i = 0;
             }
@@ -124,15 +133,66 @@ public class MainActivity extends AppCompatActivity {
             cargarImagenes();
         });
 
+        btDelete.setOnClickListener( view2 -> {
+            if(listadoImagenes.size() != 0){
+                listadoImagenes.get(i).delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void unused) {
+                        Toast.makeText(MainActivity.this, "Archivo Eliminado", Toast.LENGTH_SHORT).show();
+                        listadoImagenes.remove(i);
+
+                        if(listadoImagenes.isEmpty()){
+                            Toast.makeText(MainActivity.this, "No hay imagen", Toast.LENGTH_SHORT).show();
+                            view.setImageResource(R.drawable.no_image_available);
+                            return;
+                        }
+
+                        i++;
+                        if(i >= listadoImagenes.size()){
+                            i = 0;
+                        }
+
+
+                        StorageReference storageReference = listadoImagenes.get(i);
+
+                        storageReference.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                            @Override
+                            public void onSuccess(Uri uri) {
+                                // Got the download URL for 'users/me/profile.png'
+                                Log.d("TAG",String.valueOf(uri));
+
+                                Glide.with(MainActivity.this)
+                                        .load(uri)                      //URI
+                                        .override(620,620)  //Dimencion
+                                        .into(view);                    //ImageView
+                            }
+                        }).addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception exception) {
+                                // Handle any errors
+                            }
+                        });
+                    }
+                });
+            }else{
+                Toast.makeText(MainActivity.this, "No hay imagen", Toast.LENGTH_SHORT).show();
+                view.setImageResource(R.drawable.no_image_available);
+                return;
+            }
+
+        });
+
         btSubirImagen.setOnClickListener( view -> {
 
 
             if(path != null){
                 StorageReference filePath = storage.getReference().child("fotos").child(path.getLastPathSegment());
+
                 filePath.putFile(path).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                     @Override
                     public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                         Toast.makeText(MainActivity.this, "Se guardo en la base de datos", Toast.LENGTH_SHORT).show();
+                        listadoImagenes.add(filePath);
                     }
                 });
             }else
@@ -160,7 +220,12 @@ public class MainActivity extends AppCompatActivity {
 
         if(resultCode == RESULT_OK){
             path = data.getData();
-            view.setImageURI(path);
+            //view.setImageURI(path);
+
+            Glide.with(MainActivity.this)
+                    .load(path)                      //URI
+                    .override(620,620)  //Dimencion
+                    .into(view);                    //ImageView
         }
     }
 }

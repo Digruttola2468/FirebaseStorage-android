@@ -11,18 +11,19 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-        app:layout_constraintBottom_toTopOf="@+id/btSubirImagen"
+        app:layout_constraintBottom_toTopOf="@+id/btSiguiente"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.1"
         tools:srcCompat="@tools:sample/avatars" />
 
     <Button
         android:id="@+id/btSubirImagen"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="4dp"
+        android:layout_marginEnd="12dp"
         android:layout_marginBottom="16dp"
         android:text="Subir Imagen"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -42,10 +43,19 @@
         android:id="@+id/btSiguiente"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="4dp"
         android:layout_marginBottom="16dp"
         android:text="Sig"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/btSubirImagen"
-        app:layout_constraintHorizontal_bias="0.565"
-        app:layout_constraintStart_toEndOf="@+id/btBuscarImage" />
+        app:layout_constraintBottom_toTopOf="@+id/btBuscarImage"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <Button
+        android:id="@+id/btDeleteImage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="16dp"
+        android:text="Delete"
+        app:layout_constraintBottom_toTopOf="@+id/btSubirImagen"
+        app:layout_constraintEnd_toEndOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>
