@@ -5,12 +5,15 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -19,6 +22,9 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
+
+import java.io.ByteArrayOutputStream;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -26,9 +32,10 @@ public class MainActivity extends AppCompatActivity {
     private FirebaseStorage storage = FirebaseStorage.getInstance();
     private StorageReference pathReference = storage.getReferenceFromUrl("gs://fir-storage-c7c2d.appspot.com/Horarios/horario_1b.png");
 
-    private Button btSubirImagen;
+    private Button btSubirImagen,btGaleria;
 
     private ImageView view;
+    private Uri path;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,6 +44,7 @@ public class MainActivity extends AppCompatActivity {
 
         view = findViewById(R.id.firebaseimage);
         btSubirImagen = findViewById(R.id.btSubirImagen);
+        btGaleria = findViewById(R.id.btBuscarImage);
 
         pathReference.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
             @Override
@@ -56,9 +64,27 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        btSubirImagen.setOnClickListener( view -> {
+        btGaleria.setOnClickListener( view -> {
             cargarImagenes();
-        } );
+        });
+
+        btSubirImagen.setOnClickListener( view -> {
+            StorageReference filePath = storage.getReference().child("fotos").child(path.getLastPathSegment());
+
+            if(path != null){
+                filePath.putFile(path).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                    @Override
+                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                        Toast.makeText(MainActivity.this, "Se guardo en la base de datos", Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
+
+        });
+
+
+
+
 
 
 
@@ -75,7 +101,7 @@ public class MainActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
 
         if(resultCode == RESULT_OK){
-            Uri path = data.getData();
+            path = data.getData();
             view.setImageURI(path);
         }
     }
