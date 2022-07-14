@@ -11,6 +11,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.Log;
+import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
@@ -34,7 +35,7 @@ public class MainActivity extends AppCompatActivity {
     private FirebaseStorage storage = FirebaseStorage.getInstance();
     private StorageReference pathReference = storage.getReferenceFromUrl("gs://fir-storage-c7c2d.appspot.com/Horarios/horario_1b.png");
 
-    private Button btSubirImagen,btGaleria,btSiguiente,btDelete;
+    private Button btSubirImagen,btGaleria,btSiguiente,btDelete,btFichero;
 
     private ImageView view;
     private Uri path;
@@ -51,8 +52,7 @@ public class MainActivity extends AppCompatActivity {
         btGaleria = findViewById(R.id.btBuscarImage);
         btSiguiente = findViewById(R.id.btSiguiente);
         btDelete = findViewById(R.id.btDeleteImage);
-
-
+        btFichero = findViewById(R.id.btFicheros);
 
         StorageReference listRef = storage.getReference().child("fotos");
         listRef.listAll().addOnSuccessListener(new OnSuccessListener<ListResult>() {
@@ -201,7 +201,13 @@ public class MainActivity extends AppCompatActivity {
         });
 
 
-
+        btFichero.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(MainActivity.this,Activity_ficheros.class);
+                startActivity(i);
+            }
+        });
 
 
 
