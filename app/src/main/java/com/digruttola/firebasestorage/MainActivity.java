@@ -135,7 +135,8 @@ public class MainActivity extends AppCompatActivity {
                         Toast.makeText(MainActivity.this, "Se guardo en la base de datos", Toast.LENGTH_SHORT).show();
                     }
                 });
-            }
+            }else
+                Toast.makeText(this, "Buscar imagen en la galeria", Toast.LENGTH_SHORT).show();
 
         });
 
